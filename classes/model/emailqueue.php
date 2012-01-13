@@ -19,7 +19,7 @@ class Model_EmailQueue extends ORM {
 	public function __construct($id = NULL) {
 
 		// Gets the configuration
-		$config = Kohana::$config->load('emailqueue')->as_array();
+		$config = $this->getConfiguration();
 		extract($config, EXTR_SKIP);
 
 		// Sets the table name
@@ -119,6 +119,54 @@ class Model_EmailQueue extends ORM {
 		$this->emailreply	= $email;
 		$this->namereply	= $name;
 		return $this;
+	}
+
+	/**
+	 * Function to returns the configuration's module
+	 *
+	 * @author Luiz Claudio
+	 * @param  boolean $as_array, default true
+	 * @return array or Config Object
+	 */
+	public function getConfiguration($as_array = true){
+		$config = Kohana::$config->load('emailqueue');
+		if($as_array)
+			return $config->as_array();
+		else
+			return $config;
+	}
+
+	/**
+	 * This function manages the sending of emails
+	 *
+	 * @author Luiz Claudio
+	 */
+	public function sendEmails(){
+		// Gets configuration
+		$config = $this->getConfiguration();
+
+		// Gets emails from database
+		$emails = $this
+			->limit($config['amountToSend'])
+			->find_all();
+
+		// Send emails
+		foreach($emails as $email){
+
+			// Standard variables
+			$mailer = Email::factory($email->subject, $email->message, $email->type)
+				->to($email->emailto, $email->nameto)
+				->from($email->emailfrom, $email->namefrom);
+
+			// With reply address
+			if(!empty($email->emailreply))
+				$mailer->reply_to($email->emailreply, $email->namereply);
+
+			// Send
+			if($mailer->send())
+				$email->delete();
+		}
+		return true;
 	}
 
 }
