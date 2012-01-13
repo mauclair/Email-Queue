@@ -14,6 +14,8 @@ Developed to Kohana 3.2, this module requires some other modules to work fine.
 
 # Installation / Configuration
 
+Clone or add submodule to your project, in the "modules" folder of framework, then:
+
 ### Create a new table in database with the name you prefer ###
 
 	CREATE TABLE `emailqueue` (
@@ -40,9 +42,19 @@ to
 
 	/application/config/emailqueue.php
 
-Edit the configuration file as you needed, exists a variable that define the table name where will be stored the emails.
+Edit the configuration file as needed, exists a variable that define the table name where will be stored the emails.
+
+	return array(
+	  // Table name that stored the emails to send
+	  'tablename'    => 'emailqueue',
+	  
+	  // Amount of emails will be send by a cron call
+	  'amountToSend' => 100,
+	);
 
 # How to use
+
+### Adding emails to queue
 
 	EmailQueue::factory($subject, $message, $type)
 	  ->to($emailTo, $nameTo)
@@ -50,3 +62,10 @@ Edit the configuration file as you needed, exists a variable that define the tab
 	  ->reply_to($emailReply, $nameReply)
 	  ->save();
 
+### Cron configuration
+
+On your server you need add the cron job like this.
+
+	*/3 * * * * curl -o /tmp/emailqueue http://[application's address]/emailqueue/sendEmails
+
+You can change the interval time for calls as needed. On example a call is executed each 3 minutes.
