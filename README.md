@@ -6,6 +6,8 @@ The emails are stored in database and a cron takes care to send.
 
 Developed to Kohana 3.2, this module requires some other modules to work fine.
 
+* For portuguese documentation: [Kohana 3S Tecnologia](http://3stecnologia.com.br/artigos/email-queue-modulo-para-kohana).
+
 # Requeriments
 
 * ORM Module
