@@ -127,4 +127,24 @@ class EmailQueue_Core {
 			return false;
 	}
 
+	/**
+	 * Static function to returns the configuration's module
+	 *
+	 * @author Luiz Claudio
+	 * @param  boolean $as_array, default true
+	 * @return array or Config Object
+	 */
+	public static function getConfiguration($as_array = true){
+		return ORM::factory('emailqueue')->getConfiguration($as_array);
+	}
+
+	/**
+	 * Static function called by the controller to send the emails
+	 *
+	 * @author Luiz Claudio
+	 */
+	public static function sendEmails(){
+		return ORM::factory('emailqueue')->sendEmails();
+	}
+
 }
